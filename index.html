@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>熾火流光 - 台灣玻璃工藝文化特展與史料庫</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Anime.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            red: '#E63946',
+                            orange: '#F4A261',
+                            darkorange: '#D04E1E',
+                            teal: '#2A9D8F',
+                            light: '#FAFAFA',
+                            card: '#FFFFFF',
+                            text: '#1D3557'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans TC', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;600;700;900&family=Poppins:wght@600;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #FAFAFA;
+            color: #2B2D42;
+            overflow-x: hidden;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .reveal-item {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .hero-bg {
+            background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1579783902614-a3fb3927b675?q=80&w=1920&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        /* Download Button Animation Styles */
+        .dl-button-container {
+            position: relative;
+            width: 260px;
+            height: 64px;
+            margin: 0 auto;
+        }
+
+        .dl-button {
+            background: #111827;
+            height: 100%;
+            width: 100%;
+            text-align: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: pointer;
+            border-radius: 50px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px -5px rgba(230, 57, 70, 0.4);
+            border: 2px solid rgba(230, 57, 70, 0.6);
+            transition: transform 0.2s ease, border-color 0.3s ease;
+        }
+
+        .dl-button:hover {
+            transform: translateY(-2px);
+            border-color: #E63946;
+        }
+
+        .dl-text {
+            font-family: 'Noto Sans TC', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #FFFFFF;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 0;
+            right: 0;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: opacity 0.3s ease;
+        }
+
+        .dl-progress-bar {
+            position: absolute;
+            height: 100%;
+            width: 0%;
+            left: 0;
+            top: 0;
+            border-radius: 50px;
+            background: linear-gradient(90deg, #E63946, #F4A261);
+        }
+
+        .dl-svg {
+            width: 28px;
+            height: 28px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .dl-check {
+            fill: none;
+            stroke: #FFFFFF;
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 50;
+            stroke-dashoffset: 50;
+        }
+
+        /* Interactive Grid CSS */
+        .glass-grid-container {
+            max-width: 450px;
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 auto;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+            border: 4px solid #FFFFFF;
+        }
+
+        .glass-grid-item {
+            flex: 0 1 20%;
+            cursor: pointer;
+            font-size: 0;
+            overflow: hidden;
+            aspect-ratio: 1 / 1;
+        .glass-check {
+            fill: none;
+            stroke: #FFFFFF;
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 50;
+            stroke-dashoffset: 50;
+        }
+
+        /* Highlighter Animation Effect */
+        .highlighter-container {
+            position: relative;
+            display: inline-block;
+            white-space: nowrap;
+        }
+
+        .highlighter-text {
+            position: relative;
+            z-index: 2;
+        }
+
+        .highlighter-mark {
+            position: absolute;
+            left: 0;
+            bottom: 8%;
+            height: 42%;
+            width: 0%;
+            background: linear-gradient(90deg, #F4A261, #E63946);
+            opacity: 0.85;
+            border-radius: 4px;
+            z-index: 1;
+            mix-blend-mode: screen;
+            box-shadow: 0 0 12px rgba(244, 162, 97, 0.6);
+        }
+    </style>
+</head>
+<body class="bg-brand-light text-slate-800">
+
+    <nav class="fixed top-0 left-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 transition-all duration-300 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-brand-red flex items-center justify-center text-white font-bold text-xl shadow-md">
+                    玻
+                </div>
+                <span class="text-xl font-bold tracking-wider text-slate-800">熾火流光 <span class="text-brand-red text-sm font-normal">| 台灣玻璃工藝史料館</span></span>
+            </a>
+            <div class="hidden lg:flex items-center gap-6 font-medium text-slate-600 text-sm">
+                <a href="#history" class="hover:text-brand-red transition-colors">歷史演進</a>
+                <a href="#crafts" class="hover:text-brand-red transition-colors">四大工法</a>
+                <a href="#science" class="hover:text-brand-red transition-colors">材質科學</a>
+                <a href="#equipment" class="hover:text-brand-red transition-colors">硬體設備</a>
+                <a href="#safety" class="hover:text-brand-red transition-colors">操作安全</a>
+                <a href="#masters" class="hover:text-brand-red transition-colors">大師典範</a>
+                <a href="#workshops" class="hover:text-brand-red transition-colors">文化據點</a>
+                <a href="#contact" class="px-5 py-2 rounded-full bg-brand-red text-white hover:bg-brand-darkorange transition-all shadow-md hover:shadow-lg">聯絡諮詢</a>
+            </div>
+            <button id="menu-btn" class="lg:hidden text-2xl text-slate-700 focus:outline-none">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-b border-gray-200 px-6 py-4 flex flex-col gap-3 font-medium text-sm">
+            <a href="#history" class="hover:text-brand-red">歷史演進</a>
+            <a href="#crafts" class="hover:text-brand-red">四大工法</a>
+            <a href="#science" class="hover:text-brand-red">材質科學</a>
+            <a href="#equipment" class="hover:text-brand-red">硬體設備</a>
+            <a href="#safety" class="hover:text-brand-red">操作安全</a>
+            <a href="#masters" class="hover:text-brand-red">知名大師</a>
+            <a href="#workshops" class="hover:text-brand-red">文化據點</a>
+            <a href="#contact" class="text-brand-red font-bold">聯絡我們</a>
+        </div>
+    </nav>
+
+    <!-- Back to Top Button -->
+    <button id="backToTopBtn" class="fixed bottom-8 right-8 z-50 w-12 h-12 rounded-full bg-brand-red text-white shadow-lg hover:bg-brand-darkorange hover:shadow-xl transition-all duration-300 opacity-0 pointer-events-none flex items-center justify-center text-lg focus:outline-none">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
+    <header class="hero-bg min-h-screen flex items-center justify-center text-center text-white px-4 relative pt-20">
+        <div class="max-w-4xl mx-auto space-y-6">
+            <span class="inline-block px-4 py-1.5 rounded-full bg-brand-red/80 backdrop-blur-md text-xs font-semibold tracking-widest uppercase">
+                Taiwanese Glass Craft Cultural & Historical Repository
+            </span>
+            <h1 class="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight leading-tight">
+                千度熾熱下的<br>
+                <span class="highlighter-container">
+                    <span class="highlighter-mark" id="highlighterMark"></span>
+                    <span class="highlighter-text text-transparent bg-clip-text bg-gradient-to-r from-orange-200 via-brand-orange to-red-300">璀璨流光與淬鍊傳承</span>
+                </span>
+            </h1>
+            <p class="text-base md:text-lg text-gray-200 font-light max-w-3xl mx-auto leading-relaxed">
+                從史前十三行遺跡的玻璃珠貿易、日治頂竹圍黑金町熔爐火光，到六〇年代聖誕燈泡外銷奇蹟，乃至當代琉璃脫蠟與藝術吹塑。全方位探索台灣玻璃百年物質文明與極致工藝。
+            </p>
+
+            <!-- Download PDF Animated Button -->
+            <div class="pt-4">
+                <p class="text-xs text-gray-300 mb-3 tracking-wide">免費下載【台灣玻璃工藝歷史與技法白皮書 PDF】</p>
+                <div class="dl-button-container">
+                    <div class="dl-button" id="downloadBtn">
+                        <div class="dl-progress-bar" id="dlProgressBar"></div>
+                        <div class="dl-text" id="dlText">
+                            <i class="fa-solid fa-file-arrow-down"></i>
+                            <span>點擊下載手冊</span>
+                        </div>
+                        <svg class="dl-svg" viewBox="0 0 52 52">
+                            <path class="dl-check" id="dlCheck" d="M14 27 l8 8 l16 -16"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce text-white/70">
+            <a href="#stats" class="text-2xl"><i class="fa-solid fa-chevron-down"></i></a>
+        </div>
+    </header>
+
+    <section id="stats" class="py-12 bg-slate-900 text-white border-y border-slate-800">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div class="p-4">
+                <div class="text-3xl md:text-5xl font-extrabold text-brand-orange flex items-center justify-center gap-1">
+                    <span class="counter" data-target="152840">0</span>
+                    <span class="text-lg text-red-400">+</span>
+                </div>
+                <div class="text-xs md:text-sm text-gray-400 mt-2 font-medium">累積瀏覽與文化查詢人次</div>
+            </div>
+
+            <div class="p-4">
+                <div class="text-3xl md:text-5xl font-extrabold text-brand-red flex items-center justify-center gap-1">
+                    <span class="counter" data-target="1887">0</span>
+                    <span class="text-lg text-red-400">年</span>
+                </div>
+                <div class="text-xs md:text-sm text-gray-400 mt-2 font-medium">台灣首家玻璃廠創立紀錄</div>
+            </div>
+
+            <div class="p-4">
+                <div class="text-3xl md:text-5xl font-extrabold text-brand-orange flex items-center justify-center gap-1">
+                    <span class="counter" data-target="1925">0</span>
+                    <span class="text-lg text-red-400">年</span>
+                </div>
+                <div class="text-xs md:text-sm text-gray-400 mt-2 font-medium">新竹第一家玻璃廠發祥</div>
+            </div>
+
+            <div class="p-4">
+                <div class="text-3xl md:text-5xl font-extrabold text-brand-red flex items-center justify-center gap-1">
+                    <span class="counter" data-target="1370">0</span>
+                    <span class="text-lg text-red-400">°C</span>
+                </div>
+                <div class="text-xs md:text-sm text-gray-400 mt-2 font-medium">矽砂完全熔融極限溫度</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="history" class="py-24 px-6 max-w-6xl mx-auto">
+        <div class="text-center mb-16 reveal-item">
+            <span class="text-brand-red font-bold tracking-widest text-sm uppercase">Comprehensive Historical Chronology</span>
+            <h2 class="text-3xl md:text-5xl font-extrabold text-slate-800 mt-2">台灣玻璃工藝百年歷史演進</h2>
+            <div class="w-20 h-1 bg-brand-red mx-auto mt-4 rounded-full"></div>
+            <p class="text-gray-600 mt-4 max-w-3xl mx-auto leading-relaxed">
+                從史前考古遺址貿易琉璃珠，到清末台北濫觴、日治新竹發祥、戰後外銷奇蹟乃至現代當代美學轉型，完整梳理跨越百年的物質文明發展脈絡。
+            </p>
+        </div>
+
+        <div class="relative border-l-2 border-brand-orange/40 ml-4 md:ml-32 space-y-12">
+            <!-- Timeline Item 0: Prehistoric Archaeology -->
+            <div class="relative pl-8 md:pl-12 reveal-item">
+                <div class="absolute -left-[17px] top-1.5 w-8 h-8 rounded-full bg-slate-800 text-white flex items-center justify-center font-bold text-xs ring-4 ring-white shadow">
+                    史前
+                </div>
+                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded bg-amber-100 text-amber-900">考古源起</span>
+                        <span class="text-xs text-gray-400">金屬器時代 (約西元前後~1500年)</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800">十三行與舊香蘭遺址的琉璃珠交易</h3>
+                    <p class="text-gray-600 mt-3 text-sm leading-relaxed">
+                        考古發現顯示，早在金屬器時代，台灣北部十三行遺址、台東舊香蘭遺址及南部排灣/魯凱族部落，即有大量的「鈉鋁矽酸鹽玻璃珠」（Mineral Soda-Alumina Glass Beads）。這些玻璃珠主要透過海外貿易由東南亞及印度傳入，不僅是身分地位與祭祀權力的象徵，也揭開了台灣島嶼對玻璃材質接觸與珍視的早期序幕。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Timeline Item 1: Qing Dynasty Origin -->
+            <div class="relative pl-8 md:pl-12 reveal-item">
+                <div class="absolute -left-[17px] top-1.5 w-8 h-8 rounded-full bg-brand-red text-white flex items-center justify-center font-bold text-xs ring-4 ring-white shadow">
+                    1887
+                </div>
+                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded bg-orange-100 text-brand-darkorange">清末濫觴</span>
+                        <span class="text-xs text-gray-400">光緒十三年</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800">陳兩成先生於台北創立全台首家玻璃廠</h3>
+                    <p class="text-gray-600 mt-3 text-sm leading-relaxed">
+                        台灣近代玻璃工業的正式開端，起源於 1887 年陳兩成先生在台北大稻埕附近開設的玻璃作坊。當時以簡易燃煤坩堝爐製造平光玻璃杯、煤油燈罩及藥用小瓶，雖然設備簡陋、產量有限，但正式開啟了本土人工吹製玻璃器具的工業發展紀錄。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Timeline Item 2: Japanese Colonial Era -->
+            <div class="relative pl-8 md:pl-12 reveal-item">
+                <div class="absolute -left-[17px] top-1.5 w-8 h-8 rounded-full bg-brand-red text-white flex items-center justify-center font-bold text-xs ring-4 ring-white shadow">
+                    1925
+                </div>
+                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded bg-orange-100 text-brand-darkorange">日治新竹發祥</span>
+                        <span class="text-xs text-gray-400">大正十四年</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800">廖啟明創立「合成硝子製造所」與地理優勢</h3>
+                    <p class="text-gray-600 mt-3 text-sm leading-relaxed">
+                        台北實業家廖啟明先生深入新竹考察，發現新竹赤土崎與頂竹圍一帶蘊藏極為優質的天然矽砂（SiO₂ 含量達 70% 以上），加上十八尖山周邊豐富的天然氣（瓦斯）資源，極具發展玻璃熔融所需的熱源條件。廖啟明隨即於新竹頂竹圍（今東南街一帶，後改名聯成、華夏玻璃）建立「合成硝子製造所」，奠定新竹作為「台灣玻璃之鄉」的百年基石。
+                    </p>
+                    <div class="mt-4 p-4 bg-orange-50/60 rounded-xl text-xs text-slate-700 leading-relaxed border-l-4 border-brand-orange">
+                        <strong>歷史細節：</strong>1939年（昭和14年），日商進駐設立「台灣高級硝子工業株式會社」，引進日本自動化吹製技術與軍需醫療玻璃生產，培訓了大批在地高技術的吹玻璃師傅（俗稱玻璃工）。
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline Item 3: Post-War Golden Era -->
+            <div class="relative pl-8 md:pl-12 reveal-item">
+                <div class="absolute -left-[17px] top-1.5 w-8 h-8 rounded-full bg-brand-red text-white flex items-center justify-center font-bold text-xs ring-4 ring-white shadow">
+                    1960
+                </div>
+                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded bg-orange-100 text-brand-darkorange">外銷黃金期</span>
+                        <span class="text-xs text-gray-400">民國四十九年至六十年代</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800">聖誕燈泡王國與「家庭即工廠」網絡</h3>
+                    <p class="text-gray-600 mt-3 text-sm leading-relaxed">
+                        二次大戰後，1954年「新竹玻璃製造廠（新玻）」成立。60年代起，新竹地區的實心熱塑（燈火工藝）與空心吹製迅速蓬勃發展，外銷歐美聖誕樹上的多彩串燈燈泡與精緻玻璃小動物套裝。當時新竹高峰路、香山一帶形成「家庭即工廠」的代工產業鏈，台灣一度壟斷全球 70% 以上的聖誕燈泡市場，被譽為國際「玻璃藝品王國」。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Timeline Item 4: Modern Transition -->
+            <div class="relative pl-8 md:pl-12 reveal-item">
+                <div class="absolute -left-[17px] top-1.5 w-8 h-8 rounded-full bg-brand-red text-white flex items-center justify-center font-bold text-xs ring-4 ring-white shadow">
+                    1990
+                </div>
+                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded bg-orange-100 text-brand-darkorange">文化自覺與藝術化</span>
+                        <span class="text-xs text-gray-400">民國八十年代</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800">金玻獎推動與新竹玻璃工藝博物館成立</h3>
+                    <p class="text-gray-600 mt-3 text-sm leading-relaxed">
+                        80 年代面臨石油危機、人工成本上升與東南亞低價競爭，傳統加工廠面臨轉型危機。在地工藝家開始自覺將代工技術轉化為當代藝術創作。新竹市政府自 1993 年起舉辦「金玻獎」展覽競賽，並於 1999 年將日治時期自治會館古蹟改建為「新竹市立玻璃工藝博物館」，成功將產業技術保存昇華為精緻文化資產。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Timeline Item 5: Contemporary Innovation -->
+            <div class="relative pl-8 md:pl-12 reveal-item">
+                <div class="absolute -left-[17px] top-1.5 w-8 h-8 rounded-full bg-brand-red text-white flex items-center justify-center font-bold text-xs ring-4 ring-white shadow">
+                    現代
+                </div>
+                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded bg-orange-100 text-brand-darkorange">當代跨界</span>
+                        <span class="text-xs text-gray-400">21世紀永續循環</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800">綠能循環美學、建築玻璃與當代工作室</h3>
+                    <p class="text-gray-600 mt-3 text-sm leading-relaxed">
+                        現代台灣玻璃藝術家積極融合科技材料、回收玻璃永續循環（如春池玻璃 W Glass House）與建築景觀。將傳統的高溫吹製、脫蠟鑄造與當代生活茶具、燈飾及大型裝置結合，展現出多元且強韌的生命力。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="crafts" class="py-24 bg-white px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 reveal-item">
+                <span class="text-brand-red font-bold tracking-widest text-sm uppercase">Traditional & Contemporary Modalities</span>
+                <h2 class="text-3xl md:text-5xl font-extrabold text-slate-800 mt-2">台灣玻璃四大核心工藝技法</h2>
+                <div class="w-20 h-1 bg-brand-red mx-auto mt-4 rounded-full"></div>
+                <p class="text-gray-600 mt-4 max-w-3xl mx-auto leading-relaxed">
+                    解析高溫火光中衍生出的不同技法系統，從微觀手握燈火到大型窯爐吹製與細緻脫蠟，各具獨特的藝術魅力與技術工序。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Craft 1 -->
+                <div class="bg-stone-50 rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all reveal-item flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-orange-100 text-brand-red flex items-center justify-center text-xl mb-4 font-bold">
+                            01
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800">熱塑與拉絲 (Lampworking)</h3>
+                        <p class="text-xs text-brand-darkorange font-medium mt-1 mb-3">又稱「燈火工藝」或「燈炬作業」</p>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            創作者使用氧氣與瓦斯混合的高溫噴槍（噴燈），將實心玻璃棒加熱至 800°C~1200°C 軟化狀態，利用鑷子、剪刀與旋轉拉力進行微觀拉絲、捏塑與熔接。新竹傳統的玻璃動物、花草及細密昆蟲多採用此工法。
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-gray-200 text-xs text-gray-500 font-semibold">
+                        代表技法：實心捏塑、拉絲網紋、火拋光
+                    </div>
+                </div>
+
+                <!-- Craft 2 -->
+                <div class="bg-stone-50 rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all reveal-item flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-orange-100 text-brand-red flex items-center justify-center text-xl mb-4 font-bold">
+                            02
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800">空心吹製 (Glassblowing)</h3>
+                        <p class="text-xs text-brand-darkorange font-medium mt-1 mb-3">窯爐熱工（Hot Shop）核心技法</p>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            創作者使用長約 1.5 公尺的中空吹管（Blowpipe），從 1250°C 溶解窯中挑起膏狀玻璃，透過肺活量或人工吹氣膨脹成空心球體，同時利用濕木杓（Block）、鐵鉗（Jacks）與金屬板進行旋轉整形，創作花瓶、酒杯等容器。
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-gray-200 text-xs text-gray-500 font-semibold">
+                        代表技法：自由吹製、模型模吹、色粉包覆
+                    </div>
+                </div>
+
+                <!-- Craft 3 -->
+                <div class="bg-stone-50 rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all reveal-item flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-orange-100 text-brand-red flex items-center justify-center text-xl mb-4 font-bold">
+                            03
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800">脫蠟鑄造 (Pâte de verre)</h3>
+                        <p class="text-xs text-brand-darkorange font-medium mt-1 mb-3">精密琉璃藝術與立體雕塑</p>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            先以原型師彫刻蠟模，包覆耐火石膏後將蠟加熱熔化流出（脫蠟），留下精密的空腔模具。再填入多彩彩色玻璃料塊，置入電窯中加熱至約 850°C 使玻璃流入模具，經過數天緩慢退火後拆模研磨。作品具備厚重與層次流動感。
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-gray-200 text-xs text-gray-500 font-semibold">
+                        代表技法：失蠟法、耐火模鑄造、流色雕塑
+                    </div>
+                </div>
+
+                <!-- Craft 4 -->
+                <div class="bg-stone-50 rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all reveal-item flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-orange-100 text-brand-red flex items-center justify-center text-xl mb-4 font-bold">
+                            04
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800">冷加工與次加工 (Cold Working)</h3>
+                        <p class="text-xs text-brand-darkorange font-medium mt-1 mb-3">常溫下的光學琢磨與紋飾</p>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            作品於退火完成後，在常溫下進行的二次加工。利用金剛砂磨輪切削、金剛石鑽石砂刀研磨拋光，或以高壓噴砂（Sandblasting）、酸蝕刻（Acid Etching）及彩繪鑲嵌，增添表面霧化、幾何折射光澤與細緻圖騰。
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-gray-200 text-xs text-gray-500 font-semibold">
+                        代表技法：噴砂霧面、切子割紋、金剛砂拋光
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="science" class="py-20 bg-slate-900 text-white px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="reveal-item space-y-6">
+                    <span class="text-brand-orange font-bold tracking-widest text-sm uppercase">Material Chemistry & Physics</span>
+                    <h2 class="text-3xl md:text-4xl font-extrabold leading-tight">玻璃的材質科學：<br><span class="text-brand-red">矽砂、熔劑與熱膨脹係數 (COE)</span></h2>
+                    <p class="text-gray-300 text-sm leading-relaxed">
+                        玻璃在化學上屬於「無定形固體」（Amorphous Solid）。要將硬挺的礦石轉化為柔順流動的藝術品，必須精確掌握配方化學與熱力學規律：
+                    </p>
+                    
+                    <div class="space-y-4 text-sm">
+                        <div class="p-4 bg-slate-800 rounded-xl border border-slate-700">
+                            <div class="font-bold text-brand-orange mb-1">1. 主要骨架：二氧化矽 ($\text{SiO}_2$)</div>
+                            <p class="text-gray-400">新竹優質矽砂提供玻璃結晶骨架，純二氧化矽熔點高達 1700°C 以上。</p>
+                        </div>
+
+                        <div class="p-4 bg-slate-800 rounded-xl border border-slate-700">
+                            <div class="font-bold text-brand-orange mb-1">2. 降溫助熔劑：碳酸鈉 ($\text{Na}_2\text{CO}_3$) 與 碳酸鉀</div>
+                            <p class="text-gray-400">加入純鹼能將二氧化矽熔點顯著降低至 1300°C~1400°C，大幅減少燃料消耗。</p>
+                        </div>
+
+                        <div class="p-4 bg-slate-800 rounded-xl border border-slate-700">
+                            <div class="font-bold text-brand-orange mb-1">3. 熱膨脹係數一致性 (COE, Coefficient of Expansion)</div>
+                            <p class="text-gray-400">不同顏色的金屬氧化物色料（如鈷藍、氧化銅綠、金紅）必須具備相同的 COE 膨脹係數，否則退火後冷縮應力不同必然爆裂。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reveal-item flex flex-col justify-center bg-slate-800/80 p-8 rounded-2xl border border-slate-700 shadow-xl space-y-6">
+                    <h3 class="text-2xl font-bold text-brand-orange border-b border-slate-700 pb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-atom text-brand-red"></i> 玻璃轉化溫度與熱力學特質
+                    </h3>
+                    
+                    <div class="space-y-4 text-sm leading-relaxed text-gray-300">
+                        <p>
+                            <strong class="text-white">玻璃態轉變溫度 ($T_g$, Glass Transition Temperature)：</strong><br>
+                            當熔融玻璃自高溫降溫時，不會如結晶物質般驟然結晶，而是在約 520°C~560°C 區間進入軟化黏稠狀態。此轉化點是創作者進行吹製與熱塑的黃金溫區。
+                        </p>
+                        <p>
+                            <strong class="text-white">退火溫度與應力釋放 ($T_a$, Annealing Point)：</strong><br>
+                            在約 500°C 保溫狀態下，玻璃內部的微觀分子結構得以緩慢重排，完全消除冷熱不均產生的熱應力。經過 24 小時階梯式緩慢降溫，能賦予成型作品極高的抗衝擊性與光學透光度。
+                        </p>
+                    </div>
+
+                    <div class="p-4 bg-slate-900/80 rounded-xl border border-brand-orange/30 text-xs text-orange-200">
+                        <i class="fa-solid fa-circle-info mr-1 text-brand-orange"></i>
+                        台灣玻璃工藝結合在地矽砂品質與化學配方科技，使熔融玻璃在千度火光中展現極佳的可塑性與透光質感。
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="equipment" class="py-24 bg-stone-100 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 reveal-item">
+                <span class="text-brand-red font-bold tracking-widest text-sm uppercase">Workshop Hardware & High-Temp Mechanics</span>
+                <h2 class="text-3xl md:text-5xl font-extrabold text-slate-800 mt-2">吹製玻璃專業硬體設備介紹</h2>
+                <div class="w-20 h-1 bg-brand-red mx-auto mt-4 rounded-full"></div>
+                <p class="text-gray-600 mt-4 max-w-3xl mx-auto leading-relaxed">吹製玻璃是火與時間的極致藝術，深入解析工坊核心的三大高溫硬體設備與溫控奧秘。</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Equipment 1 -->
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-200/80 hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between reveal-item">
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="w-14 h-14 rounded-xl bg-orange-100 text-brand-red flex items-center justify-center text-2xl">
+                                <i class="fa-solid fa-fire-burner"></i>
+                            </div>
+                            <span class="text-xs font-bold px-3 py-1 bg-red-50 text-brand-red rounded-full">熔融重鎮</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-800">玻璃溶解窯</h3>
+                        <p class="text-xs text-brand-darkorange font-medium mt-1 mb-4">分類：坩堝窯（缸堝） / 電熔磚窯</p>
+                        <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                            在吹製玻璃創作前，須將玻璃碎料、粉末或原料放入窯內溶解。視工坊技術與設備專業度，由 0°C 開始升溫至約 <strong class="text-brand-red">1370°C</strong> 上下，所需升溫時間約需 <strong>48 到 72 小時</strong>。
+                        </p>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            窯爐溫度能否精準穩定達到 1370°C 是專業考驗，創作者也會依用料需求調整溶解溫度。當材料完全熔融至優質膏狀時即可開始創作，創作時爐溫通常設定於 <strong class="text-slate-800">1250°C</strong> 左右。
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500 font-semibold">
+                        <span><i class="fa-solid fa-temperature-high text-brand-red mr-1"></i> 最高溫：~1370°C</span>
+                        <span><i class="fa-solid fa-clock text-orange-400 mr-1"></i> 熔解耗時：48-72h</span>
+                    </div>
+                </div>
+
+                <!-- Equipment 2 -->
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-200/80 hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between reveal-item">
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="w-14 h-14 rounded-xl bg-orange-100 text-brand-red flex items-center justify-center text-2xl">
+                                <i class="fa-solid fa-volcano"></i>
+                            </div>
+                            <span class="text-xs font-bold px-3 py-1 bg-orange-50 text-brand-darkorange rounded-full">創作加熱</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-800">升溫加熱爐</h3>
+                        <p class="text-xs text-brand-darkorange font-medium mt-1 mb-4">二次加熱與塑形空間 (Glory Hole)</p>
+                        <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                            藝術家拿吹管撈起溶解窯內的玻璃膏開始創作。吹製過程中的加熱爐溫度設定在 <strong class="text-brand-red">1100°C 左右</strong>，由 0°C 升溫需約 20 分鐘至 1 小時以上，是工坊中最耗能的硬體。
+                        </p>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            玻璃膏在高溫下極易降溫變硬，創作者必須<strong class="text-slate-800">不停進窯與出窯與火賽跑</strong>。創作時間過長會使玻璃失去光澤，因此極度考驗創作者的熟練技術、技巧運用與豐富技法。
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500 font-semibold">
+                        <span><i class="fa-solid fa-temperature-high text-brand-red mr-1"></i> 爐溫：~1100°C</span>
+                        <span><i class="fa-solid fa-bolt text-yellow-500 mr-1"></i> 核心能耗設備</span>
+                    </div>
+                </div>
+
+                <!-- Equipment 3 -->
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-200/80 hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between reveal-item">
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="w-14 h-14 rounded-xl bg-orange-100 text-brand-red flex items-center justify-center text-2xl">
+                                <i class="fa-solid fa-temperature-arrow-down"></i>
+                            </div>
+                            <span class="text-xs font-bold px-3 py-1 bg-blue-50 text-blue-600 rounded-full">關鍵徐冷</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-800">徐冷退火爐</h3>
+                        <p class="text-xs text-brand-darkorange font-medium mt-1 mb-4">消除內部應力降溫爐 (Annealer)</p>
+                        <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                            作品在近 1000°C 下創作完成後，需立即進入設定在 <strong class="text-brand-red">攝氏 500°C</strong> 的徐冷爐。徐冷爐由 0°C 升至 500°C 需花費 1 到 7 小時不等。
+                        </p>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            放入作品後需執行精密的降溫時程表，經過約 <strong class="text-slate-800">24 小時</strong>緩慢降溫至 50°C 方可取出。若徐冷技術不專業，作品會在降溫過程中內部應力不均而爆裂變形，讓創作者付諸東流。
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500 font-semibold">
+                        <span><i class="fa-solid fa-temperature-low text-blue-500 mr-1"></i> 徐冷保溫：~500°C</span>
+                        <span><i class="fa-solid fa-hourglass-half text-brand-darkorange mr-1"></i> 降溫歷時：~24h</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="safety" class="py-24 px-6 max-w-6xl mx-auto">
+        <div class="bg-gradient-to-r from-brand-red to-brand-darkorange rounded-3xl p-8 md:p-12 text-white shadow-xl reveal-item">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8 border-b border-white/20 pb-6">
+                <div>
+                    <span class="bg-white/20 text-xs px-3 py-1 rounded-full font-semibold uppercase">Safety Protocols & Guidelines</span>
+                    <h2 class="text-3xl font-extrabold mt-2">玻璃工坊操作注意事項與安全規範</h2>
+                </div>
+                <div class="text-4xl text-orange-200">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/10">
+                    <div class="text-xl font-bold text-orange-300 mb-2">01. 個人防護裝備</div>
+                    <p class="text-sm text-gray-100 leading-relaxed">
+                        必須全程佩戴防紅外線/紫外線護目鏡、耐高溫皮革手套，穿著 100% 純棉長袖長褲與包頭工作鞋，嚴禁穿著化纖易熔材質衣物。
+                    </p>
+                </div>
+
+                <div class="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/10">
+                    <div class="text-xl font-bold text-orange-300 mb-2">02. 高溫熱輻射防範</div>
+                    <p class="text-sm text-gray-100 leading-relaxed">
+                        成型的玻璃表面看似冷卻，實質高達數百度。嚴禁以肉眼判斷溫度或觸碰未確認溫度的金屬吹管與工作台工具。
+                    </p>
+                </div>
+
+                <div class="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/10">
+                    <div class="text-xl font-bold text-orange-300 mb-2">03. 通風與粉塵防護</div>
+                    <p class="text-sm text-gray-100 leading-relaxed">
+                        熔燒加熱過程會產生熱氣與金屬氧化物氣體，工坊需保持強氣排風。執行噴砂、研磨拋光時必須配戴 N95 等級防塵口罩。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="masters" class="py-24 bg-white px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 reveal-item">
+                <span class="text-brand-red font-bold tracking-widest text-sm uppercase">Master Artisans & Pioneers</span>
+                <h2 class="text-3xl md:text-5xl font-extrabold text-slate-800 mt-2">台灣知名玻璃工藝大師典範</h2>
+                <div class="w-20 h-1 bg-brand-red mx-auto mt-4 rounded-full"></div>
+                <p class="text-gray-600 mt-4 max-w-3xl mx-auto leading-relaxed">認識以卓越手藝與獨到東方哲思美學，將台灣玻璃推向國際藝術殿堂的代表性大師。</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Master 1 -->
+                <div class="bg-brand-light rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-all reveal-item">
+                    <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?q=80&w=800&auto=format&fit=crop" alt="黃安福" class="w-full h-64 object-cover">
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-brand-red tracking-wider uppercase">國家工藝成就獎得主</span>
+                        <h3 class="text-2xl font-bold text-slate-800 mt-1">黃安福 老師</h3>
+                        <p class="text-gray-600 text-sm mt-3 leading-relaxed">
+                            從事玻璃創作逾四十年，榮獲台灣國家工藝成就獎肯定。擅長細緻的實心實棒熱塑與脫蠟鑄造，將東方禪意、佛像哲思與自然龍鳳動植物融入熔融玻璃中，作品獲多國博物館典藏。
+                        </p>
+                        <div class="mt-4 pt-4 border-t border-gray-200 text-xs text-gray-500">
+                            <strong>代表作：</strong>《龍躍鳳鳴》、《佛影蓮花》系列、台灣鄉土動物系列
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Master 2 -->
+                <div class="bg-brand-light rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-all reveal-item">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop" alt="林啟豐" class="w-full h-64 object-cover">
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-brand-red tracking-wider uppercase">吹塑藝術與傳承先驅</span>
+                        <h3 class="text-2xl font-bold text-slate-800 mt-1">林啟豐 老師</h3>
+                        <p class="text-gray-600 text-sm mt-3 leading-relaxed">
+                            精通傳統空心吹製與熱工窯爐創作，致力於新竹在地玻璃工藝的人才培育與教學傳承。其作品線條優雅流暢，將多重色彩包覆層次運用得極具當代空間藝術質感。
+                        </p>
+                        <div class="mt-4 pt-4 border-t border-gray-200 text-xs text-gray-500">
+                            <strong>代表作：</strong>《流光異彩》、《春意盎然》容器藝術系列
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Master 3 -->
+                <div class="bg-brand-light rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-all reveal-item">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=800&auto=format&fit=crop" alt="許金瑯" class="w-full h-64 object-cover">
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-brand-red tracking-wider uppercase">燈火工藝拉絲奇才</span>
+                        <h3 class="text-2xl font-bold text-slate-800 mt-1">許金瑯 老師</h3>
+                        <p class="text-gray-600 text-sm mt-3 leading-relaxed">
+                            台灣燈火玻璃（Lampworking）經典代表人物。發揮極致控溫技巧與細膩手藝，能將高溫軟化的玻璃棒拉扯成極細如髮絲的構件，組合出驚人的微觀生態昆蟲世界。
+                        </p>
+                        <div class="mt-4 pt-4 border-t border-gray-200 text-xs text-gray-500">
+                            <strong>代表作：</strong>《微觀昆蟲生態》、《極細網紋玻璃舟》
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="workshops" class="py-24 bg-stone-100 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 reveal-item">
+                <span class="text-brand-red font-bold tracking-widest text-sm uppercase">Locations & Cultural Destinations</span>
+                <h2 class="text-3xl md:text-5xl font-extrabold text-slate-800 mt-2">主要工坊與展館所在地</h2>
+                <div class="w-20 h-1 bg-brand-red mx-auto mt-4 rounded-full"></div>
+                <p class="text-gray-600 mt-4 max-w-3xl mx-auto leading-relaxed">親自造訪玻璃工藝的孕育之地，現場感受高溫吹製的震撼與光影魅力。</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 reveal-item">
+                    <div class="text-brand-red text-2xl font-bold mb-2">01</div>
+                    <h3 class="text-xl font-bold text-slate-800">新竹市玻璃工藝博物館</h3>
+                    <p class="text-gray-500 text-sm mt-1 mb-4"><i class="fa-solid fa-location-dot text-brand-red mr-1"></i> 新竹市東區公園路252號 (新竹公園內)</p>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-6">
+                        前身為 1936 年日治自治會館。典藏台灣近百年頂尖玻璃藝術創作與歷史文物，每兩年舉辦金玻獎，並設有現場吹製示範工坊。
+                    </p>
+                    <span class="inline-block px-3 py-1 bg-orange-50 text-brand-darkorange rounded-full text-xs font-semibold">博物館 / 歷史典藏</span>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 reveal-item">
+                    <div class="text-brand-red text-2xl font-bold mb-2">02</div>
+                    <h3 class="text-xl font-bold text-slate-800">台灣玻璃館 (台明將)</h3>
+                    <p class="text-gray-500 text-sm mt-1 mb-4"><i class="fa-solid fa-location-dot text-brand-red mr-1"></i> 彰化縣鹿港鎮鹿工南四路30號</p>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-6">
+                        創立全台獨一無二的「玻璃媽祖廟（護聖宮）」，結合工業精密玻璃與民俗文化，展示大型玻璃迷宮與多元生活應用。
+                    </p>
+                    <span class="inline-block px-3 py-1 bg-orange-50 text-brand-darkorange rounded-full text-xs font-semibold">觀光工廠 / 建築藝術</span>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 reveal-item">
+                    <div class="text-brand-red text-2xl font-bold mb-2">03</div>
+                    <h3 class="text-xl font-bold text-slate-800">春池玻璃 W Glass House / 坤水晶</h3>
+                    <p class="text-gray-500 text-sm mt-1 mb-4"><i class="fa-solid fa-location-dot text-brand-red mr-1"></i> 新竹市香山區 / 台北誠品松菸據點</p>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-6">
+                        推動綠能回收玻璃循環美學與都會生活體驗，提供大眾親自體驗高溫吹吹管、製作專屬玻璃杯與花器體驗。
+                    </p>
+                    <span class="inline-block px-3 py-1 bg-orange-50 text-brand-darkorange rounded-full text-xs font-semibold">循環美學 / DIY體驗</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="py-24 px-6 max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 bg-white rounded-3xl p-8 md:p-12 shadow-xl border border-gray-100 reveal-item">
+            <div>
+                <span class="text-brand-red font-bold tracking-widest text-sm uppercase">Get In Touch</span>
+                <h2 class="text-3xl font-extrabold text-slate-800 mt-2">聯絡與文化溝通管道</h2>
+                <p class="text-gray-600 mt-4 leading-relaxed text-sm">
+                    若您對台灣玻璃工藝歷史研究、學術展覽、校園巡迴講座、工坊 DIY 體驗預約或大師典藏品諮詢有任何疑問，歡迎隨時聯繫。
+                </p>
+
+                <div class="mt-8 space-y-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-orange-100 text-brand-red flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-500 font-medium">文化展覽與諮詢專線</div>
+                            <div class="text-lg font-bold text-slate-800">+886-3-562-4121</div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-orange-100 text-brand-red flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-500 font-medium">電子信箱 Email</div>
+                            <div class="text-lg font-bold text-slate-800">service@taiwan-glass-craft.org.tw</div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-orange-100 text-brand-red flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-500 font-medium">服務時間</div>
+                            <div class="text-sm font-semibold text-slate-700">週二至週日 09:00 - 17:00 (週一休館)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-stone-50 p-6 md:p-8 rounded-2xl border border-gray-200 relative">
+                <h3 class="text-xl font-bold text-slate-800 mb-6">線上快速訊息留言</h3>
+                
+                <!-- Toast Alert Notification Element -->
+                <div id="toastAlert" class="hidden mb-6 p-4 rounded-xl bg-green-50 border border-green-200 text-green-800 text-sm flex items-start gap-3 shadow-sm">
+                    <i class="fa-solid fa-circle-check text-green-600 text-xl mt-0.5"></i>
+                    <div>
+                        <div class="font-bold">訊息發送成功！</div>
+                        <div class="text-xs text-green-700 mt-1">感謝您的寶貴留言，專人將於 1 個工作天內（24-48 小時內）確認內容並主動透過 Email 回覆您。</div>
+                    </div>
+                </div>
+
+                <form id="contactForm" onsubmit="handleFormSubmit(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">您的姓名 / Name</label>
+                        <input type="text" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:border-brand-red text-sm" placeholder="請輸入姓名">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">聯絡信箱 / Email</label>
+                        <input type="email" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:border-brand-red text-sm" placeholder="name@example.com">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">洽詢主題 / Subject</label>
+                        <select class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:border-brand-red text-sm">
+                            <option>工藝歷史導覽預約</option>
+                            <option>大師作品展覽合作</option>
+                            <option>學術研究與媒體採訪</option>
+                            <option>其他諮詢</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">留言內容 / Message</label>
+                        <textarea rows="4" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:border-brand-red text-sm" placeholder="請填寫您的寶貴意見或需求..."></textarea>
+                    </div>
+                    <button type="submit" id="submitBtn" class="w-full py-3.5 bg-brand-red text-white font-bold rounded-xl shadow-md hover:bg-brand-darkorange transition-colors flex items-center justify-center gap-2">
+                        <span>發送訊息 Send Message</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-slate-900 text-white py-12 px-6 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-brand-red flex items-center justify-center font-bold text-sm">玻</div>
+                <span class="font-bold text-lg tracking-wider">熾火流光 | 台灣玻璃工藝文化推廣網</span>
+            </div>
+            <p class="text-xs text-gray-400">
+                © 2026 台灣玻璃工藝文化專題網. All Rights Reserved. Dedicated to Glass Heritage Preservation.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initHighlighterAnimation();
+            initDownloadAnimation();
+            initCounterAnimation();
+            initScrollReveal();
+            initMobileMenu();
+            initBackToTop();
+        });
+
+        /* Highlighter Sweep Animation */
+        function initHighlighterAnimation() {
+            const mark = document.getElementById('highlighterMark');
+            if (!mark) return;
+
+            anime({
+                targets: mark,
+                width: ['0%', '100%'],
+                duration: 1200,
+                delay: 600,
+                easing: 'easeInOutQuart'
+            });
+        }
+
+        /* Back to Top Logic */
+        function initBackToTop() {
+            const backToTopBtn = document.getElementById('backToTopBtn');
+            if (!backToTopBtn) return;
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    backToTopBtn.classList.remove('opacity-0', 'pointer-events-none');
+                    backToTopBtn.classList.add('opacity-100', 'pointer-events-auto');
+                } else {
+                    backToTopBtn.classList.remove('opacity-100', 'pointer-events-auto');
+                    backToTopBtn.classList.add('opacity-0', 'pointer-events-none');
+                }
+            });
+
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        }
+
+        /* Download Button Animation */
+        function initDownloadAnimation() {
+            const btn = document.getElementById('downloadBtn');
+            const progress = document.getElementById('dlProgressBar');
+            const text = document.getElementById('dlText');
+            const svg = document.querySelector('.dl-svg');
+            const check = document.getElementById('dlCheck');
+
+            let isDownloading = false;
+
+            btn.addEventListener('click', () => {
+                if (isDownloading) return;
+                isDownloading = true;
+
+                anime({
+                    targets: text,
+                    opacity: 0,
+                    duration: 300,
+                    easing: 'easeOutQuad'
+                });
+
+                anime({
+                    targets: progress,
+                    width: '100%',
+                    duration: 2500,
+                    easing: 'easeInOutCubic',
+                    complete: function() {
+                        anime({
+                            targets: svg,
+                            opacity: 1,
+                            duration: 200
+                        });
+
+                        anime({
+                            targets: check,
+                            strokeDashoffset: [50, 0],
+                            duration: 600,
+                            easing: 'easeOutCubic',
+                            complete: function() {
+                                setTimeout(() => {
+                                    progress.style.width = '0%';
+                                    svg.style.opacity = '0';
+                                    check.style.strokeDashoffset = '50';
+                                    
+                                    text.innerHTML = '<i class="fa-solid fa-circle-check text-green-400"></i> <span>下載完成！</span>';
+                                    
+                                    anime({
+                                        targets: text,
+                                        opacity: 1,
+                                        duration: 400
+                                    });
+
+                                    setTimeout(() => {
+                                        text.innerHTML = '<i class="fa-solid fa-file-arrow-down"></i> <span>再次下載手冊</span>';
+                                        isDownloading = false;
+                                    }, 3000);
+                                }, 1200);
+                            }
+                        });
+                    }
+                });
+            });
+        }
+
+        /* Number Counter Roll-up Animation */
+        function initCounterAnimation() {
+            const counters = document.querySelectorAll('.counter');
+            let hasAnimated = false;
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !hasAnimated) {
+                        hasAnimated = true;
+                        counters.forEach(counter => {
+                            const target = parseInt(counter.getAttribute('data-target'));
+                            let obj = { count: 0 };
+
+                            anime({
+                                targets: obj,
+                                count: target,
+                                duration: 2500,
+                                easing: 'easeOutExpo',
+                                round: 1,
+                                update: function() {
+                                    counter.innerText = obj.count.toLocaleString();
+                                }
+                            });
+                        });
+                    }
+                });
+            }, { threshold: 0.3 });
+
+            const statsSection = document.getElementById('stats');
+            if (statsSection) {
+                observer.observe(statsSection);
+            }
+        }
+
+        /* Scroll Reveal Animation */
+        function initScrollReveal() {
+            const observerOptions = {
+                root: null,
+                threshold: 0.15
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        anime({
+                            targets: entry.target,
+                            translateY: [40, 0],
+                            opacity: [0, 1],
+                            duration: 900,
+                            easing: 'easeOutCubic'
+                        });
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.reveal-item').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        /* Mobile Menu Nav Logic */
+        function initMobileMenu() {
+            const menuBtn = document.getElementById('menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (menuBtn && mobileMenu) {
+                menuBtn.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+        }
+
+        /* Form Handler with Inline Toast Notification */
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submitBtn');
+            const toast = document.getElementById('toastAlert');
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> <span>傳送中 Send...</span>';
+
+            setTimeout(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span>發送訊息 Send Message</span>';
+                document.getElementById('contactForm').reset();
+                
+                toast.classList.remove('hidden');
+                anime({
+                    targets: toast,
+                    opacity: [0, 1],
+                    translateY: [-10, 0],
+                    duration: 500,
+                    easing: 'easeOutCubic'
+                });
+
+                setTimeout(() => {
+                    anime({
+                        targets: toast,
+                        opacity: [1, 0],
+                        duration: 500,
+                        easing: 'easeInCubic',
+                        complete: function() {
+                            toast.classList.add('hidden');
+                        }
+                    });
+                }, 6000);
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
